@@ -14,16 +14,17 @@ struct ContentView: View {
         VStack(spacing: 20) {
             Spacer()
 
+           
             ZStack {
                 Circle()
                     .fill(Color.white.opacity(0.3))
                     .shadow(radius: 5)
                     .frame(width: 100, height: 100)
-
+                    
                 Text("🔥")
                     .font(.largeTitle)
                     .fontWeight(.heavy)
-            }
+                   }
             .padding()
 
             Text("Hello Learner!")
@@ -31,36 +32,37 @@ struct ContentView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 5)
+                .padding(.leading, -8.0)
 
             Text("This app will help you to learn every day")
                 .font(.headline)
                 .foregroundColor(.gray)
+                .padding(.leading, -8.0)
                 .frame(maxWidth: .infinity, alignment: .leading)
-
+                
             Text("I want to learn")
                 .font(.title3)
                 .fontWeight(.bold)
                 .padding(.top, 10)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            TextField("Enter a subject...", text: $inputText)
+            TextField("Swift...", text: $inputText)
                 .padding()
                 .background(Color.black.opacity(0.7))
                 .cornerRadius(8)
-                .foregroundColor(.white)
+                .foregroundColor(.gray)
                 .font(.system(size: 17))
-                .overlay(RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray, lineWidth: 1))
-                .padding(.horizontal)
-            
+                .padding(.leading, 0.0)
+            Divider() // إضافة حظ رمادي
+                .background(Color.gray)
+
 
             Text("I want to learn it in")
                 .font(.body)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
+                .padding(.leading, -7.0)
 
             HStack(spacing: 12) {
                 ForEach(["Week", "Month", "Year"], id: \.self) { duration in
@@ -74,11 +76,11 @@ struct ContentView: View {
                             .background(learningDuration == duration ? Color(red: 1.0, green: 159/255, blue: 10/255) : Color(red: 44/255, green: 44/255, blue: 49/255))
                             .cornerRadius(8)
                     }
-                    .padding(.vertical, 5)
+                    .padding(.vertical, -5)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal)
+            .padding(.leading, -4.0)
 
             Button(action: {
                 // Implement your "Start" button logic here
