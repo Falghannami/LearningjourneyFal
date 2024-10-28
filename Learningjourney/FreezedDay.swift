@@ -1,55 +1,34 @@
-//
-//  FreezedDay.swift
-//  Learningjourney
-//
-//  Created by فالحه الغنامي on 22/04/1446 AH.
-//
-
-
 import SwiftUI
 
 struct FreezedDayView: View {
-    @State private var selectedDate = Date() // Keeps track of the currently selected date
-    @State private var streakCount = 10 // Represents the current streak
-    @State private var freezeCount = 2 // Number of freezes used
-    @State private var totalFreezes = 6 // Max freezes available in the current period (month)
-    
+    @State private var selectedDate = Date()
+    @State private var streakCount = 10
+    @State private var freezeCount = 2
+    @State private var totalFreezes = 6
+
     let calendar = Calendar.current
     let daysInWeek = 7
     let months = Calendar.current.monthSymbols
-    
-    // Function to calculate if today is frozen
-    var isFrozen: Bool {
-        freezeCount < totalFreezes
-    }
-    
-    // Function to determine if the streak is reset (after 32 hours, or other conditions)
-    func shouldResetStreak() -> Bool {
-        // Implement the reset logic based on the hours passed, etc.
-        // For now, returning false as a placeholder
-        return false
-    }
-    
-    // Calendar display logic
-    var monthDays: [Date] {
-        let range = calendar.range(of: .day, in: .month, for: selectedDate)!
-        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: selectedDate))!
-        
-        return range.compactMap { day in
-            calendar.date(byAdding: .day, value: day - 1, to: startOfMonth)
+
+    var currentWeekDays: [Date] {
+        let startOfWeek = calendar.dateInterval(of: .weekOfMonth, for: selectedDate)?.start ?? selectedDate
+        return (0..<daysInWeek).compactMap { day in
+            calendar.date(byAdding: .day, value: day, to: startOfWeek)
         }
     }
-    
-    // UI for the app
+
+    func changeWeek(by offset: Int) {
+        selectedDate = calendar.date(byAdding: .day, value: daysInWeek * offset, to: selectedDate) ?? selectedDate
+    }
+
     var body: some View {
-        VStack(spacing: 10) { // Adjusted spacing to reduce top/bottom space
-            // Header for the title and streak info in HStack
+        VStack(spacing: 0) {
             HStack {
                 VStack(alignment: .leading) {
                     Text("Wednesday, 11 SEP")
                         .font(.headline)
                         .foregroundColor(.gray)
-                    
+
                     Text("Learning Swift")
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -57,142 +36,185 @@ struct FreezedDayView: View {
                 }
                 Spacer()
                 Circle()
-                    .fill(Color.white.opacity(0.5))
-                    .frame(width: 40, height: 40)
+                    .fill(Color.white.opacity(0.3))
+                    .frame(width: 45, height: 45)
                     .overlay(Text("🔥").font(.title))
             }
             .background(Color.black)
             .cornerRadius(12)
-            
-            // Calendar View
-            VStack(spacing: 20) {
-                ZStack{
+            .padding(.bottom, 20)
+
+            VStack(spacing: 13) {
+                ZStack {
                     RoundedRectangle(cornerRadius: 13)
                         .stroke(style: StrokeStyle(lineWidth: 1))
-                        .frame(width: 390, height: 288)
+                        .frame(width: 390, height: 230)
                         .foregroundColor(.gray.opacity(0.6))
-                    
-                    HStack {
-                        Button(action: {
-                            // Go to previous month
-                            selectedDate = calendar.date(byAdding: .month, value: -1, to: selectedDate)!
-                        }) {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(.orange)
-                        }
-                        
-                        Text(monthAndYear(for: selectedDate))
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        
-                        Button(action: {
-                            // Go to next month
-                            selectedDate = calendar.date(byAdding: .month, value: 1, to: selectedDate)!
-                        }) {
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.orange)
-                        }
-                    }
-                    
-                    HStack {
-                        ForEach(monthDays, id: \.self) { day in
-                            VStack {
-                                Text(dayName(for: day))
-                                    .font(.caption)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white)
-                                
-                                Circle()
-                                    .fill(calendar.isDateInToday(day) ? Color.white : Color.white.opacity(0.5))
-                                    .frame(width: 30, height: 30)
-                                    .overlay(
-                                        Text("\(calendar.component(.day, from: day))")
-                                            .foregroundColor(calendar.isDateInToday(day) ? .white : .black)
-                                            .fontWeight(.bold)
-                                    )
+
+                    VStack {
+                        HStack {
+                            Text(monthAndYear(for: selectedDate))
+                                .font(.headline)
+                                .foregroundColor(.white)
+
+                            Menu {
+                                ForEach(months.indices, id: \.self) { index in
+                                    Button(action: {
+                                        // هنا يمكنك إضافة الكود لتغيير الشهر
+                                    }) {
+                                        Text(months[index])
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "chevron.down")
+                                    .foregroundColor(.orange)
+                            }
+
+                            Spacer()
+
+                            Button(action: {
+                                changeWeek(by: -1)
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .foregroundColor(.orange)
+                            }
+
+                            Button(action: {
+                                changeWeek(by: 1)
+                            }) {
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.orange)
                             }
                         }
+                        .padding(.bottom, 10)
+                        
+                        HStack(spacing: 20) {
+                            ForEach(currentWeekDays, id: \.self) { day in
+                                VStack {
+                                    Text(dayName(for: day))
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(isToday(day) ? .white : .gray)
+
+                                    if isSpecialDate(day) {
+                                        Circle()
+                                            .fill(circleColor(for: day))
+                                            .frame(width: 50, height: 50)
+                                            .overlay(
+                                                Text("\(calendar.component(.day, from: day))")
+                                                    .foregroundColor(textColor(for: day))
+                                                    .fontWeight(.bold)
+                                                    .font(.title2)
+                                            )
+                                    } else {
+                                        Text("\(calendar.component(.day, from: day))")
+                                            .foregroundColor(isToday(day) ? .white : .gray)
+                                            .fontWeight(.bold)
+                                            .font(.title2)
+                                    }
+                                }
+                                .padding(.vertical, 5)
+                            }
+                        }
+                        
+                        .padding(.horizontal)
+                        .padding(.bottom, 10)
+                        Divider() // إضافة حظ رمادي
+                            .background(Color.gray)
+                            
+
+                        HStack {
+                            VStack {
+                                Text("\(streakCount) 🔥")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.orange)
+                                Text("Day streak")
+                                    .foregroundColor(.white)
+                            }
+
+                            Spacer()
+
+
+                            VStack {
+                                Text("\(freezeCount) ❄️")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.blue)
+                                Text("Day frozen")
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .padding()
                     }
                 }
-                .background(Color.black.opacity(0.8))
-                .cornerRadius(12)
-                
-                // Streak and Freeze Section
-                HStack {
-                    VStack {
-                        Text("\(streakCount) 🔥")
-                            .font(.largeTitle)
-                            .foregroundColor(.orange)
-                        Text("Day streak")
-                            .foregroundColor(.white)
-                    }
-                    
-                    Spacer()
-                    
-                    VStack {
-                        Text("\(freezeCount) ❄️")
-                            .font(.largeTitle)
-                            .foregroundColor(.blue)
-                        Text("Day frozen")
-                            .foregroundColor(.white)
-                    }
-                }
-                
-                .background(Color.black.opacity(0.8))
-                .cornerRadius(12)
             }
-            // Button to log the day as learned with 300 diameter
+            .padding(.bottom, 20)
+
             Button(action: {
-                // Action to log the day
-                streakCount += 1 // Increment the streak
+                streakCount += 1
             }) {
-                Text("Freezed today")
+                Text("Day Freezed")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .foregroundColor(.blue) // Text color changed to orange
-                    .frame(width: 300, height: 300) // Set diameter to 300
-                    .background(Color.blue.opacity(0.2)) // Background color changed to brown
-                    .clipShape(Circle()) // Ensure it is circular
+                    .foregroundColor(.blue)
+                    .frame(width: 335.0, height: 360.0)
+                    .background(Color.blue .opacity(0.3))
+                    .clipShape(Circle())
             }
             .padding(.top)
-            
-            // Freeze button
+
             Button(action: {
-                // Action to freeze the day
                 if freezeCount < totalFreezes {
                     freezeCount += 1
                 }
             }) {
                 Text("Freeze day")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.blue)
+                    .font(.title)
+                    .fontWeight(.medium)
+                    .foregroundColor(.gray)
                     .padding()
-                    .background(Color.blue.opacity(0.2))
+                    .background(Color.gray.opacity(0.2))
                     .cornerRadius(10)
             }
             .padding(.top)
-            
-            // Freeze usage indicator
+
             Text("\(freezeCount) out of \(totalFreezes) freezes used")
                 .font(.footnote)
                 .foregroundColor(.gray)
         }
-        .padding(.horizontal) // Horizontal padding only
+        .padding(.horizontal)
         .background(Color.black.ignoresSafeArea())
     }
-    
-    // Helper functions for formatting the date
+
     func dayName(for date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEE"
         return formatter.string(from: date)
     }
-    
+
     func monthAndYear(for date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         return formatter.string(from: date)
+    }
+
+    func isSpecialDate(_ date: Date) -> Bool {
+        let day = calendar.component(.day, from: date)
+        let month = calendar.component(.month, from: date)
+        return (month == 1 && (day == 27 || day == 28 || day == 29 || day == 30))
+    }
+
+    func circleColor(for date: Date) -> Color {
+        let day = calendar.component(.day, from: date)
+        return (day == 27 || day == 30) ? .brown : .blue
+    }
+
+    func textColor(for date: Date) -> Color {
+        let day = calendar.component(.day, from: date)
+        return (day == 27 || day == 30) ? .orange : .blue
+    }
+
+    func isToday(_ date: Date) -> Bool {
+        return calendar.isDateInToday(date)
     }
 }
 
