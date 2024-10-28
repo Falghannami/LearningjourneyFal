@@ -22,7 +22,7 @@ struct LearningTrackerView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: -10) {
             HStack {
                 VStack(alignment: .leading) {
                     Text("Wednesday, 11 SEP")
@@ -48,7 +48,7 @@ struct LearningTrackerView: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 13)
                         .stroke(style: StrokeStyle(lineWidth: 1))
-                        .frame(width: 390, height: 288)
+                        .frame(width: 390, height: 250)
                         .foregroundColor(.gray.opacity(0.6))
 
                     VStack {
@@ -65,10 +65,12 @@ struct LearningTrackerView: View {
                                         Text(months[index])
                                     }
                                 }
-                            } label: {
+                            }
+                            label: {
                                 Image(systemName: "chevron.down")
                                     .foregroundColor(.orange)
                             }
+                            
 
                             Spacer()
 
@@ -133,6 +135,12 @@ struct LearningTrackerView: View {
                             }
 
                             Spacer()
+                            
+                            Divider()
+                                .frame(height: 60)
+                                .background(Color.white)
+
+                            Spacer()
 
                             VStack {
                                 Text("\(freezeCount) ❄️")
@@ -142,6 +150,8 @@ struct LearningTrackerView: View {
                                     .foregroundColor(.white)
                             }
                         }
+                        .padding()
+
                         .padding()
                     }
                 }
@@ -155,7 +165,7 @@ struct LearningTrackerView: View {
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.black)
-                    .frame(width: 300, height: 300)
+                    .frame(width: 335.0, height: 360.0)
                     .background(Color.orange)
                     .clipShape(Circle())
             }
@@ -167,7 +177,7 @@ struct LearningTrackerView: View {
                 }
             }) {
                 Text("Freeze day")
-                    .font(.title2)
+                    .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.blue)
                     .padding()
