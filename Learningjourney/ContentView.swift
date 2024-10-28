@@ -58,7 +58,7 @@ struct ContentView: View {
                              .padding()
                              .background(Color.black.opacity(0.7))
                              .cornerRadius(8)
-                             .foregroundColor(.gray)
+                             .foregroundColor(.white)
                              .font(.system(size: 17))
                              .padding(.top, -0.9)
                          
@@ -92,7 +92,7 @@ struct ContentView: View {
                          .padding(.leading, -4.0)
                          
                          
-                                 NavigationLink(destination: LearningTrackerView()){
+                                 NavigationLink(destination: LearningTrackerView().navigationBarBackButtonHidden(true)){
                                  Text("Start")
                                      .font(.title2)
                                      .foregroundColor(.black)

@@ -23,41 +23,43 @@ struct LearningTrackerView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: -10) {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Wednesday, 11 SEP")
-                            .font(.headline)
-                            .foregroundColor(.gray)
-                        
-                        Text("Learning Swift")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                    }
-                    Spacer()
-                    
-                    Circle()
-                        .fill(Color.white.opacity(0.3))
-                        .frame(width: 45, height: 45)
-                        .overlay(Text("🔥").font(.title))
-                    NavigationLink(destination: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/) {
-                        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Label Content@*/Text("Navigate")/*@END_MENU_TOKEN@*/
-                    }
-
-                }
-                .background(Color.black)
-                .cornerRadius(12)
-                .padding(.bottom, 20)
+            ZStack {
+                Color.black
+                    .ignoresSafeArea()
                 
-                VStack(spacing: 13) {
+                VStack(spacing: 15) {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Wednesday, 11 SEP")
+                                .font(.headline)
+                                .foregroundColor(.gray)
+                            
+                            Text("Learning Swift")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                        }
+                        Spacer()
+                        
+                        NavigationLink(destination: CurrentDay2().navigationBarBackButtonHidden(true)) {
+                            Circle()
+                                .fill(Color.white.opacity(0.3))
+                                .frame(width: 45, height: 45)
+                                .overlay(Text("🔥").font(.title))
+                        }
+                    }
+                    .background(Color.black)
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
+                    
                     ZStack {
                         RoundedRectangle(cornerRadius: 13)
                             .stroke(style: StrokeStyle(lineWidth: 1))
-                            .frame(width: 390, height: 250)
                             .foregroundColor(.gray.opacity(0.6))
+                            .frame(width: 350, height: 230)
                         
-                        VStack {
+                        VStack(spacing: 15) {
                             HStack {
                                 Text(monthAndYear(for: selectedDate))
                                     .font(.headline)
@@ -66,70 +68,53 @@ struct LearningTrackerView: View {
                                 Menu {
                                     ForEach(months.indices, id: \.self) { index in
                                         Button(action: {
-                                            // هنا يمكنك إضافة الكود لتغيير الشهر
+                                            // تغيير الشهر
                                         }) {
                                             Text(months[index])
                                         }
                                     }
-                                }
-                                label: {
+                                } label: {
                                     Image(systemName: "chevron.down")
                                         .foregroundColor(.orange)
                                 }
                                 
-                                
                                 Spacer()
                                 
-                                Button(action: {
-                                    changeWeek(by: -1)
-                                }) {
+                                Button(action: { changeWeek(by: -1) }) {
                                     Image(systemName: "chevron.left")
                                         .foregroundColor(.orange)
                                 }
                                 
-                                Button(action: {
-                                    changeWeek(by: 1)
-                                }) {
+                                Button(action: { changeWeek(by: 1) }) {
                                     Image(systemName: "chevron.right")
                                         .foregroundColor(.orange)
                                 }
                             }
-                            .padding(.bottom, 10)
+                            .padding(.horizontal, 20)
                             
-                            HStack(spacing: 20) {
+                            HStack(spacing: 10) {
                                 ForEach(currentWeekDays, id: \.self) { day in
                                     VStack {
                                         Text(dayName(for: day))
                                             .font(.subheadline)
                                             .fontWeight(.bold)
-                                            .foregroundColor(isToday(day) ? .white : .gray)
+                                            .foregroundColor(.white)
                                         
-                                        if isSpecialDate(day) {
-                                            Circle()
-                                                .fill(circleColor(for: day))
-                                                .frame(width: 50, height: 50)
-                                                .overlay(
-                                                    Text("\(calendar.component(.day, from: day))")
-                                                        .foregroundColor(textColor(for: day))
-                                                        .fontWeight(.bold)
-                                                        .font(.title2)
-                                                )
-                                        } else {
-                                            Text("\(calendar.component(.day, from: day))")
-                                                .foregroundColor(isToday(day) ? .white : .gray)
-                                                .fontWeight(.bold)
-                                                .font(.title2)
-                                        }
+                                        Circle()
+                                            .fill(circleColor(for: day))
+                                            .frame(width: 40, height: 40)
+                                            .overlay(
+                                                Text("\(calendar.component(.day, from: day))")
+                                                    .foregroundColor(textColor(for: day))
+                                                    .fontWeight(.bold)
+                                                    .font(.body)
+                                            )
                                     }
-                                    .padding(.vertical, 5)
                                 }
                             }
                             
-                            .padding(.horizontal)
-                            .padding(.bottom, 10)
-                            Divider() // إضافة حظ رمادي
+                            Divider()
                                 .background(Color.gray)
-                            
                             
                             HStack {
                                 VStack {
@@ -156,48 +141,46 @@ struct LearningTrackerView: View {
                                         .foregroundColor(.white)
                                 }
                             }
-                            .padding()
-                            
-                            .padding()
+                            .padding(.horizontal, 30)
                         }
+                        .padding(.vertical)
+                    }
+                    
+                    VStack(spacing: 15) {
+                        Button(action: {
+                            streakCount += 1
+                        }) {
+                            Text("Log today as Learned")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .frame(width: 335, height: 250)
+                                .background(Color.orange)
+                                .clipShape(Circle())
+                        }
+                        
+                        Button(action: {
+                            if freezeCount < totalFreezes {
+                                freezeCount += 1
+                            }
+                        }) {
+                            Text("Freeze day")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(.blue)
+                                .padding()
+                                .background(Color.blue.opacity(0.2))
+                                .cornerRadius(10)
+                        }
+                        
+                        Text("\(freezeCount) out of \(totalFreezes) freezes used")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
                     }
                 }
-                .padding(.bottom, 20)
-                
-                Button(action: {
-                    streakCount += 1
-                }) {
-                    Text("Log today as Learned")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.black)
-                        .frame(width: 335.0, height: 360.0)
-                        .background(Color.orange)
-                        .clipShape(Circle())
-                }
-                .padding(.top)
-                
-                Button(action: {
-                    if freezeCount < totalFreezes {
-                        freezeCount += 1
-                    }
-                }) {
-                    Text("Freeze day")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.blue)
-                        .padding()
-                        .background(Color.blue.opacity(0.2))
-                        .cornerRadius(10)
-                }
-                .padding(.top)
-                
-                Text("\(freezeCount) out of \(totalFreezes) freezes used")
-                    .font(.footnote)
-                    .foregroundColor(.gray)
+                .padding(.top, 20)
+                .background(Color.black.ignoresSafeArea())
             }
-            .padding(.horizontal)
-            .background(Color.black.ignoresSafeArea())
         }
     }
     func dayName(for date: Date) -> String {
@@ -212,26 +195,30 @@ struct LearningTrackerView: View {
         return formatter.string(from: date)
     }
 
-    func isSpecialDate(_ date: Date) -> Bool {
-        let day = calendar.component(.day, from: date)
-        let month = calendar.component(.month, from: date)
-        return (month == 1 && (day == 27 || day == 28 || day == 29 || day == 30))
-    }
-
     func circleColor(for date: Date) -> Color {
-        let day = calendar.component(.day, from: date)
-        return (day == 27 || day == 30) ? .brown : .blue
+        if isToday(date) {
+            return .blue
+        } else if isTomorrow(date) {
+            return .orange
+        } else {
+            let day = calendar.component(.day, from: date)
+            return (day == 27 || day == 30) ? .brown : .gray
+        }
     }
 
     func textColor(for date: Date) -> Color {
-        let day = calendar.component(.day, from: date)
-        return (day == 27 || day == 30) ? .orange : .blue
+        return .white
     }
 
     func isToday(_ date: Date) -> Bool {
         return calendar.isDateInToday(date)
     }
+
+    func isTomorrow(_ date: Date) -> Bool {
+        return calendar.isDateInTomorrow(date)
+    }
 }
+
 
 struct LearningTrackerView_Previews: PreviewProvider {
     static var previews: some View {

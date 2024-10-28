@@ -138,9 +138,15 @@ struct LearnedDayView: View {
                                 Text("Day streak")
                                     .foregroundColor(.white)
                             }
-
+                            
                             Spacer()
-
+                            
+                            Divider()
+                                .frame(height: 60)
+                                .background(Color.white)
+                            
+                            Spacer()
+                            
                             VStack {
                                 Text("\(freezeCount) ❄️")
                                     .font(.largeTitle)

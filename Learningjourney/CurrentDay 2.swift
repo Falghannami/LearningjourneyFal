@@ -1,12 +1,18 @@
+
+
+
+
+
 import SwiftUI
 
 struct CurrentDay2: View {
     @State private var learningDuration = "Week"
-    @State private var inputText = "Swift"
+    @State private var inputText = ""
     
     var body: some View {
         VStack(spacing: 20) {
             
+            // إضافة السهم والنصوص في مستوى واحد باستخدام HStack
             HStack {
                 Image(systemName: "chevron.left")
                     .foregroundColor(.orange)
@@ -70,54 +76,7 @@ struct CurrentDay2: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             
-            Spacer()
-
-            // لوحة مفاتيح افتراضية مخصصة في الثلث الأخير
-            VStack(spacing: 8) {
-                ForEach(["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"], id: \.self) { row in
-                    HStack(spacing: 6) {
-                        ForEach(row.map { String($0) }, id: \.self) { letter in
-                            Button(action: {
-                                inputText += letter
-                            }) {
-                                Text(letter)
-                                    .font(.system(size: 20))
-                                    .foregroundColor(.white)
-                                    .frame(width: 30, height: 40)
-                                    .background(Color.gray.opacity(0.6))
-                                    .cornerRadius(5)
-                            }
-                        }
-                    }
-                }
-                
-                // زر "مسافة" وزر "حذف"
-                HStack {
-                    Button(action: {
-                        inputText += " "
-                    }) {
-                        Text("Space")
-                            .font(.system(size: 18))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, minHeight: 40)
-                            .background(Color.gray.opacity(0.6))
-                            .cornerRadius(5)
-                    }
-
-                    Button(action: {
-                        if !inputText.isEmpty {
-                            inputText.removeLast()
-                        }
-                    }) {
-                        Image(systemName: "delete.left")
-                            .foregroundColor(.white)
-                            .frame(width: 50, height: 40)
-                            .background(Color.gray.opacity(0.6))
-                            .cornerRadius(5)
-                    }
-                }
-            }
-            .padding(.bottom, 30)
+            Spacer() // يترك الثلثين الأخيرين من الشاشة فارغين
         }
         .padding()
         .background(Color.black.ignoresSafeArea())
